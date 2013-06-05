@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <link href='https://fonts.googleapis.com/css?family=Chivo:900' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <title>Fuse by Distrotech</title>
+  </head>
+
+  <body>
+    <div id="container">
+      <div class="inner">
+
+        <header>
+          <h1>Fuse</h1>
+          <h2>Mirror of git://fuse.git.sourceforge.net/gitroot/fuse/fuse</h2>
+        </header>
+
+        <section id="downloads" class="clearfix">
+          <a href="https://github.com/Distrotech/fuse/zipball/master" id="download-zip" class="button"><span>Download .zip</span></a>
+          <a href="https://github.com/Distrotech/fuse/tarball/master" id="download-tar-gz" class="button"><span>Download .tar.gz</span></a>
+          <a href="https://github.com/Distrotech/fuse" id="view-on-github" class="button"><span>View on GitHub</span></a>
+        </section>
+
+        <hr>
+
+        <section id="main_content">
+          <h1>
+<a name="general-information" class="anchor" href="#general-information"><span class="octicon octicon-link"></span></a>General Information</h1>
+
+<p>FUSE (Filesystem in Userspace) is a simple interface for userspace
+programs to export a virtual filesystem to the Linux kernel.  FUSE
+also aims to provide a secure method for non privileged users to
+create and mount their own filesystem implementations.</p>
+
+<p>You can download the source code releases from</p>
+
+<p><a href="http://sourceforge.net/projects/fuse">http://sourceforge.net/projects/fuse</a></p>
+
+<p>or alternatively you can use CVS to get the very latest development
+version:</p>
+
+<p>cvs -d :pserver:<a href="mailto:anonymous@fuse.cvs.sourceforge.net">anonymous@fuse.cvs.sourceforge.net</a>:/cvsroot/fuse co fuse</p>
+
+<h1>
+<a name="dependencies" class="anchor" href="#dependencies"><span class="octicon octicon-link"></span></a>Dependencies</h1>
+
+<p>Linux kernel version 2.6.X where X &gt;= 9.</p>
+
+<p>Alternatively a kernel module from FUSE release 2.5.* can be used with
+this release, which supports kernels &gt;= 2.4.21.</p>
+
+<h1>
+<a name="installation" class="anchor" href="#installation"><span class="octicon octicon-link"></span></a>Installation</h1>
+
+<p>./configure
+make
+make install
+modprobe fuse</p>
+
+<p>You may also need to add '/usr/local/lib' to '/etc/ld.so.conf' and/or
+run ldconfig.</p>
+
+<p>You'll also need a fuse kernel module, Linux kernels 2.6.14 or later
+contain FUSE support.</p>
+
+<p>For more details see the file 'INSTALL'</p>
+
+<h1>
+<a name="how-to-use" class="anchor" href="#how-to-use"><span class="octicon octicon-link"></span></a>How To Use</h1>
+
+<p>FUSE is made up of three main parts:</p>
+
+<ul>
+<li><p>A kernel filesystem module</p></li>
+<li><p>A userspace library</p></li>
+<li><p>A mount/unmount program</p></li>
+</ul><p>Here's how to create your very own virtual filesystem in five easy
+steps (after installing FUSE):</p>
+
+<p>1) Edit the file example/fusexmp.c to do whatever you want...</p>
+
+<p>2) Build the fusexmp program</p>
+
+<p>3) run 'example/fusexmp /mnt/fuse -d'</p>
+
+<p>4) ls -al /mnt/fuse</p>
+
+<p>5) Be glad</p>
+
+<p>If it doesn't work out, please ask!  Also see the file 'include/fuse.h' for
+detailed documentation of the library interface.</p>
+
+<h1>
+<a name="security" class="anchor" href="#security"><span class="octicon octicon-link"></span></a>Security</h1>
+
+<p>If you run 'make install', the fusermount program is installed
+set-user-id to root.  This is done to allow normal users to mount
+their own filesystem implementations.</p>
+
+<p>There must however be some limitations, in order to prevent Bad User from
+doing nasty things.  Currently those limitations are:</p>
+
+<ul>
+<li><p>The user can only mount on a mountpoint, for which it has write
+permission</p></li>
+<li><p>The mountpoint is not a sticky directory which isn't owned by the
+user (like /tmp usually is)</p></li>
+<li><p>No other user (including root) can access the contents of the mounted
+filesystem.</p></li>
+</ul><h1>
+<a name="configuration" class="anchor" href="#configuration"><span class="octicon octicon-link"></span></a>Configuration</h1>
+
+<p>Some options regarding mount policy can be set in the file
+'/etc/fuse.conf'</p>
+
+<p>Currently these options are:</p>
+
+<p>mount_max = NNN</p>
+
+<p>Set the maximum number of FUSE mounts allowed to non-root users.
+  The default is 1000.</p>
+
+<p>user_allow_other</p>
+
+<p>Allow non-root users to specify the 'allow_other' or 'allow_root'
+  mount options.</p>
+
+<h1>
+<a name="mount-options" class="anchor" href="#mount-options"><span class="octicon octicon-link"></span></a>Mount options</h1>
+
+<p>Most of the generic mount options described in 'man mount' are
+supported (ro, rw, suid, nosuid, dev, nodev, exec, noexec, atime,
+noatime, sync async, dirsync).  Filesystems are mounted with
+'-onodev,nosuid' by default, which can only be overridden by a
+privileged user.</p>
+
+<p>These are FUSE specific mount options that can be specified for all
+filesystems:</p>
+
+<p>default_permissions</p>
+
+<p>By default FUSE doesn't check file access permissions, the
+  filesystem is free to implement it's access policy or leave it to
+  the underlying file access mechanism (e.g. in case of network
+  filesystems).  This option enables permission checking, restricting
+  access based on file mode.  This is option is usually useful
+  together with the 'allow_other' mount option.</p>
+
+<p>allow_other</p>
+
+<p>This option overrides the security measure restricting file access
+  to the user mounting the filesystem.  So all users (including root)
+  can access the files.  This option is by default only allowed to
+  root, but this restriction can be removed with a configuration
+  option described in the previous section.</p>
+
+<p>allow_root</p>
+
+<p>This option is similar to 'allow_other' but file access is limited
+  to the user mounting the filesystem and root.  This option and
+  'allow_other' are mutually exclusive.</p>
+
+<p>kernel_cache</p>
+
+<p>This option disables flushing the cache of the file contents on
+  every open().  This should only be enabled on filesystems, where the
+  file data is never changed externally (not through the mounted FUSE
+  filesystem).  Thus it is not suitable for network filesystems and
+  other "intermediate" filesystems.</p>
+
+<p>NOTE: if this option is not specified (and neither 'direct_io') data
+  is still cached after the open(), so a read() system call will not
+  always initiate a read operation.</p>
+
+<p>auto_cache</p>
+
+<p>This option enables automatic flushing of the data cache on open().
+  The cache will only be flushed if the modification time or the size
+  of the file has changed.</p>
+
+<p>large_read</p>
+
+<p>Issue large read requests.  This can improve performance for some
+  filesystems, but can also degrade performance.  This option is only
+  useful on 2.4.X kernels, as on 2.6 kernels requests size is
+  automatically determined for optimum performance.</p>
+
+<p>direct_io</p>
+
+<p>This option disables the use of page cache (file content cache) in
+  the kernel for this filesystem.  This has several affects:</p>
+
+<pre><code> - Each read() or write() system call will initiate one or more
+   read or write operations, data will not be cached in the
+   kernel.
+
+ - The return value of the read() and write() system calls will
+   correspond to the return values of the read and write
+   operations.  This is useful for example if the file size is not
+   known in advance (before reading it).
+</code></pre>
+
+<p>max_read=N</p>
+
+<p>With this option the maximum size of read operations can be set.
+  The default is infinite.  Note that the size of read requests is
+  limited anyway to 32 pages (which is 128kbyte on i386).</p>
+
+<p>max_readahead=N</p>
+
+<p>Set the maximum number of bytes to read-ahead.  The default is
+  determined by the kernel.  On linux-2.6.22 or earlier it's 131072
+  (128kbytes)</p>
+
+<p>max_write=N</p>
+
+<p>Set the maximum number of bytes in a single write operation.  The
+  default is 128kbytes.  Note, that due to various limitations, the
+  size of write requests can be much smaller (4kbytes).  This
+  limitation will be removed in the future.</p>
+
+<p>async_read</p>
+
+<p>Perform reads asynchronously. This is the default</p>
+
+<p>sync_read</p>
+
+<p>Perform all reads (even read-ahead) synchronously.</p>
+
+<p>hard_remove</p>
+
+<p>The default behavior is that if an open file is deleted, the file is
+  renamed to a hidden file (.fuse_hiddenXXX), and only removed when
+  the file is finally released.  This relieves the filesystem
+  implementation of having to deal with this problem.  This option
+  disables the hiding behavior, and files are removed immediately in
+  an unlink operation (or in a rename operation which overwrites an
+  existing file).</p>
+
+<p>It is recommended that you not use the hard_remove option. When
+  hard_remove is set, the following libc functions fail on unlinked
+  files (returning errno of ENOENT):
+     - read()
+     - write()
+     - fsync()
+     - close()
+     - f*xattr()
+     - ftruncate()
+     - fstat()
+     - fchmod()
+     - fchown()</p>
+
+<p>debug</p>
+
+<p>Turns on debug information printing by the library.</p>
+
+<p>fsname=NAME</p>
+
+<p>Sets the filesystem source (first field in /etc/mtab).  The default
+  is the program name.</p>
+
+<p>subtype=TYPE</p>
+
+<p>Sets the filesystem type (third field in /etc/mtab).  The default is
+  the program name.</p>
+
+<p>If the kernel suppports it, /etc/mtab and /proc/mounts will show the
+  filesystem type as "fuse.TYPE"</p>
+
+<p>If the kernel doesn't support subtypes, the source filed will be
+  "TYPE#NAME", or if fsname option is not specified, just "TYPE".</p>
+
+<p>use_ino</p>
+
+<p>Honor the 'st_ino' field in getattr() and fill_dir().  This value is
+  used to fill in the 'st_ino' field in the stat()/lstat()/fstat()
+  functions and the 'd_ino' field in the readdir() function.  The
+  filesystem does not have to guarantee uniqueness, however some
+  applications rely on this value being unique for the whole
+  filesystem.</p>
+
+<p>readdir_ino</p>
+
+<p>If 'use_ino' option is not given, still try to fill in the 'd_ino'
+  field in readdir().  If the name was previously looked up, and is
+  still in the cache, the inode number found there will be used.
+  Otherwise it will be set to '-1'.  If 'use_ino' option is given,
+  this option is ignored.</p>
+
+<p>nonempty</p>
+
+<p>Allows mounts over a non-empty file or directory.  By default these
+  mounts are rejected (from version 2.3.1) to prevent accidental
+  covering up of data, which could for example prevent automatic
+  backup.</p>
+
+<p>umask=M</p>
+
+<p>Override the permission bits in 'st_mode' set by the filesystem.
+  The resulting permission bits are the ones missing from the given
+  umask value.  The value is given in octal representation.</p>
+
+<p>uid=N</p>
+
+<p>Override the 'st_uid' field set by the filesystem.</p>
+
+<p>gid=N</p>
+
+<p>Override the 'st_gid' field set by the filesystem.</p>
+
+<p>blkdev</p>
+
+<p>Mount a filesystem backed by a block device.  This is a privileged
+  option.  The device must be specified with the 'fsname=NAME' option.</p>
+
+<p>entry_timeout=T</p>
+
+<p>The timeout in seconds for which name lookups will be cached. The
+  default is 1.0 second.  For all the timeout options, it is possible
+  to give fractions of a second as well (e.g. "-oentry_timeout=2.8")</p>
+
+<p>negative_timeout=T</p>
+
+<p>The timeout in seconds for which a negative lookup will be cached.
+  This means, that if file did not exist (lookup retuned ENOENT), the
+  lookup will only be redone after the timeout, and the file/directory
+  will be assumed to not exist until then.  The default is 0.0 second,
+  meaning that caching negative lookups are disabled.</p>
+
+<p>attr_timeout=T</p>
+
+<p>The timeout in seconds for which file/directory attributes are
+  cached.  The default is 1.0 second.</p>
+
+<p>ac_attr_timeout=T</p>
+
+<p>The timeout in seconds for which file attributes are cached for the
+  purpose of checking if "auto_cache" should flush the file data on
+  open.   The default is the value of 'attr_timeout'</p>
+
+<p>intr</p>
+
+<p>Allow requests to be interrupted.  Turning on this option may result
+  in unexpected behavior, if the filesystem does not support request
+  interruption.</p>
+
+<p>intr_signal=NUM</p>
+
+<p>Specify which signal number to send to the filesystem when a request
+  is interrupted.  The default is 10 (USR1).</p>
+
+<p>modules=M1[:M2...]</p>
+
+<p>Add modules to the filesystem stack.  Modules are pushed in the
+  order they are specified, with the original filesystem being on the
+  bottom of the stack.</p>
+
+<h2>
+<a name="modules-distributed-with-fuse" class="anchor" href="#modules-distributed-with-fuse"><span class="octicon octicon-link"></span></a>Modules distributed with fuse</h2>
+
+<p>iconv</p>
+
+<pre><code>Perform file name character set conversion.  Options are:
+
+from_code=CHARSET
+
+  Character set to convert from (see iconv -l for a list of possible
+  values).  Default is UTF-8.
+
+to_code=CHARSET
+
+  Character set to convert to.  Default is determined by the current
+  locale.
+
+
+subdir
+</code></pre>
+
+<p>Prepend a given directory to each path. Options are:</p>
+
+<p>subdir=DIR</p>
+
+<p>Directory to prepend to all paths.  This option is mandatory.</p>
+
+<p>rellinks</p>
+
+<p>Transform absolute symlinks into relative</p>
+
+<p>norellinks</p>
+
+<p>Do not transform absolute symlinks into relative.  This is the default.</p>
+
+<h1>
+<a name="reporting-bugs" class="anchor" href="#reporting-bugs"><span class="octicon octicon-link"></span></a>Reporting bugs</h1>
+
+<p>Please send bug reports to the <a href="mailto:fuse-devel@lists.sourceforge.net">fuse-devel@lists.sourceforge.net</a>
+mailing list.</p>
+
+<p>The list is open, you need not be subscribed to post.</p>
+        </section>
+
+        <footer>
+          Fuse is maintained by <a href="https://github.com/Distrotech">Distrotech</a><br>
+          This page was generated by <a href="http://pages.github.com">GitHub Pages</a>. Tactile theme by <a href="http://twitter.com/jasonlong">Jason Long</a>.
+        </footer>
+
+        
+      </div>
+    </div>
+  </body>
+</html>
